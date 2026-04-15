@@ -13,9 +13,6 @@ namespace worldGenAccelerator
         private int m_cachedZoneCount;
         private bool m_built;
 
-        // Zone grid radius: world radius 10000 / zone size 64 = ~156
-        private const int ZoneGridRadius = 156;
-
         public void Build()
         {
             if (m_built)
@@ -28,15 +25,19 @@ namespace worldGenAccelerator
             m_cachedZoneCount = 0;
 
             WorldGenerator wg = WorldGenerator.instance;
+            float zoneSize = ZoneSystem.instance.m_zoneSize;
+            float worldRadius = ExpandWorldSizeBridge.GetWorldRadius();
+            int gridRadius = Mathf.CeilToInt(worldRadius / zoneSize);
+            double radiusSq = (double)worldRadius * worldRadius;
 
-            for (int x = -ZoneGridRadius; x <= ZoneGridRadius; x++)
+            for (int x = -gridRadius; x <= gridRadius; x++)
             {
-                for (int y = -ZoneGridRadius; y <= ZoneGridRadius; y++)
+                for (int y = -gridRadius; y <= gridRadius; y++)
                 {
                     Vector2i zoneId = new Vector2i(x, y);
                     Vector3 zonePos = ZoneSystem.GetZonePos(zoneId);
 
-                    if ((double)zonePos.magnitude >= 10000.0)
+                    if ((double)zonePos.sqrMagnitude >= radiusSq)
                         continue;
 
                     Heightmap.Biome biome = wg.GetBiome(zonePos);
@@ -56,7 +57,8 @@ namespace worldGenAccelerator
             sw.Stop();
             m_built = true;
             worldGenAcceleratorPlugin.TemplateLogger.LogInfo(
-                $"BiomeZoneCache built in {sw.ElapsedMilliseconds}ms ({m_cachedZoneCount} zones cached)");
+                $"BiomeZoneCache built in {sw.ElapsedMilliseconds}ms " +
+                $"({m_cachedZoneCount} zones cached, worldRadius={worldRadius}m, gridRadius={gridRadius})");
         }
 
         public List<Vector2i> GetCandidateZones(Heightmap.Biome biomeMask, Heightmap.BiomeArea biomeAreaMask)
