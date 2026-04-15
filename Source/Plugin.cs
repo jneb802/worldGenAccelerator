@@ -9,6 +9,7 @@ using HarmonyLib;
 namespace worldGenAccelerator
 {
     [BepInPlugin(ModGUID, ModName, ModVersion)]
+    [BepInDependency("expand_world_size", BepInDependency.DependencyFlags.SoftDependency)]
     public class worldGenAcceleratorPlugin : BaseUnityPlugin
     {
         private const string ModName = "worldGenAccelerator";
