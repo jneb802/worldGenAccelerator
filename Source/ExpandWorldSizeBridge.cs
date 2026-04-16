@@ -6,9 +6,7 @@ namespace worldGenAccelerator
 {
     /// <summary>
     /// Soft integration with JereKuusela's ExpandWorldSize mod.
-    /// Reads the configured world radius via reflection so we don't require
-    /// a compile-time reference to the mod. Falls back to vanilla 10000 when
-    /// ExpandWorldSize is not installed.
+    /// Reads the configured world radius via reflection
     /// </summary>
     public static class ExpandWorldSizeBridge
     {
