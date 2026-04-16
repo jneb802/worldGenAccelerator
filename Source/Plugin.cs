@@ -30,6 +30,8 @@ namespace worldGenAccelerator
 
         public void Awake()
         {
+            Analytics.Init(Config, ModGUID, ModVersion);
+
             _enableOptimization = Config.Bind("General", "EnableOptimization", true,
                 "Enable the biome zone cache optimization for faster world generation. " +
                 "Disabling this uses vanilla generation logic. " +
