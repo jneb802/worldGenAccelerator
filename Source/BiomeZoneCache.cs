@@ -8,8 +8,8 @@ namespace worldGenAccelerator
     {
         public static BiomeZoneCache Instance { get; private set; } = new BiomeZoneCache();
 
-        private Dictionary<Heightmap.Biome, List<Vector2i>> m_zonesByBiome = new Dictionary<Heightmap.Biome, List<Vector2i>>();
-        private Dictionary<Vector2i, Heightmap.BiomeArea> m_zoneBiomeArea = new Dictionary<Vector2i, Heightmap.BiomeArea>();
+        private Dictionary<Heightmap.Biome, List<Vector2s>> m_zonesByBiome = new Dictionary<Heightmap.Biome, List<Vector2s>>();
+        private Dictionary<Vector2s, Heightmap.BiomeArea> m_zoneBiomeArea = new Dictionary<Vector2s, Heightmap.BiomeArea>();
         private int m_cachedZoneCount;
         private bool m_built;
 
@@ -34,7 +34,7 @@ namespace worldGenAccelerator
             {
                 for (int y = -gridRadius; y <= gridRadius; y++)
                 {
-                    Vector2i zoneId = new Vector2i(x, y);
+                    Vector2s zoneId = new Vector2s(x, y);
                     Vector3 zonePos = ZoneSystem.GetZonePos(zoneId);
 
                     if ((double)zonePos.sqrMagnitude >= radiusSq)
@@ -43,9 +43,9 @@ namespace worldGenAccelerator
                     Heightmap.Biome biome = wg.GetBiome(zonePos);
                     Heightmap.BiomeArea biomeArea = wg.GetBiomeArea(zonePos);
 
-                    if (!m_zonesByBiome.TryGetValue(biome, out List<Vector2i> list))
+                    if (!m_zonesByBiome.TryGetValue(biome, out List<Vector2s> list))
                     {
-                        list = new List<Vector2i>();
+                        list = new List<Vector2s>();
                         m_zonesByBiome[biome] = list;
                     }
                     list.Add(zoneId);
@@ -61,16 +61,16 @@ namespace worldGenAccelerator
                 $"({m_cachedZoneCount} zones cached, worldRadius={worldRadius}m, gridRadius={gridRadius})");
         }
 
-        public List<Vector2i> GetCandidateZones(Heightmap.Biome biomeMask, Heightmap.BiomeArea biomeAreaMask)
+        public List<Vector2s> GetCandidateZones(Heightmap.Biome biomeMask, Heightmap.BiomeArea biomeAreaMask)
         {
-            List<Vector2i> result = new List<Vector2i>();
+            List<Vector2s> result = new List<Vector2s>();
 
-            foreach (KeyValuePair<Heightmap.Biome, List<Vector2i>> kvp in m_zonesByBiome)
+            foreach (KeyValuePair<Heightmap.Biome, List<Vector2s>> kvp in m_zonesByBiome)
             {
                 if ((kvp.Key & biomeMask) == Heightmap.Biome.None)
                     continue;
 
-                foreach (Vector2i zone in kvp.Value)
+                foreach (Vector2s zone in kvp.Value)
                 {
                     if ((m_zoneBiomeArea[zone] & biomeAreaMask) != (Heightmap.BiomeArea)0)
                     {
