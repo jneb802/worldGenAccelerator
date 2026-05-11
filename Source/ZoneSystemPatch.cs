@@ -94,7 +94,7 @@ namespace worldGenAccelerator
                 zoneSystem.s_tempVeg.Clear();
 
                 // Get candidate zones from the biome cache
-                List<Vector2i> candidates = BiomeZoneCache.Instance.GetCandidateZones(
+                List<Vector2s> candidates = BiomeZoneCache.Instance.GetCandidateZones(
                     location.m_biome, location.m_biomeArea);
 
                 // Remove zones that already have a location instance or are already generated
@@ -121,7 +121,7 @@ namespace worldGenAccelerator
                     for (int i = candidates.Count - 1; i > 0; i--)
                     {
                         int j = UnityEngine.Random.Range(0, i + 1);
-                        Vector2i tmp = candidates[i];
+                        Vector2s tmp = candidates[i];
                         candidates[i] = candidates[j];
                         candidates[j] = tmp;
                     }
@@ -130,7 +130,7 @@ namespace worldGenAccelerator
                 // Iterate candidate zones
                 for (int i = 0; i < candidates.Count && placed < location.m_quantity; i++)
                 {
-                    Vector2i zoneID = candidates[i];
+                    Vector2s zoneID = candidates[i];
 
                     // Time-slice yield (outer loop)
                     UnityEngine.Random.State insideState;
