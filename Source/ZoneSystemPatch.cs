@@ -94,7 +94,7 @@ namespace worldGenAccelerator
                 zoneSystem.s_tempVeg.Clear();
 
                 // Get candidate zones from the biome cache
-                List<Vector2i> candidates = BiomeZoneCache.Instance.GetCandidateZones(
+                List<Vector2s> candidates = BiomeZoneCache.Instance.GetCandidateZones(
                     location.m_biome, location.m_biomeArea);
 
                 // Remove zones that already have a location instance or are already generated
@@ -121,7 +121,7 @@ namespace worldGenAccelerator
                     for (int i = candidates.Count - 1; i > 0; i--)
                     {
                         int j = UnityEngine.Random.Range(0, i + 1);
-                        Vector2i tmp = candidates[i];
+                        Vector2s tmp = candidates[i];
                         candidates[i] = candidates[j];
                         candidates[j] = tmp;
                     }
@@ -130,7 +130,7 @@ namespace worldGenAccelerator
                 // Iterate candidate zones
                 for (int i = 0; i < candidates.Count && placed < location.m_quantity; i++)
                 {
-                    Vector2i zoneID = candidates[i];
+                    Vector2s zoneID = candidates[i];
 
                     // Time-slice yield (outer loop)
                     UnityEngine.Random.State insideState;
@@ -225,15 +225,14 @@ namespace worldGenAccelerator
 
                         // FILTER: minDistanceFromSimilar (must NOT have similar location nearby)
                         if ((double)location.m_minDistanceFromSimilar > 0.0 &&
-                            zoneSystem.HaveLocationInRange(location.m_prefab.Name, location.m_group, randomPointInZone, location.m_minDistanceFromSimilar))
+                            zoneSystem.HaveLocationInRange(location.m_prefab.m_assetID, location.m_group, randomPointInZone, location.m_minDistanceFromSimilar))
                         {
                             continue;
                         }
 
                         // FILTER: maxDistanceFromSimilar (MUST have similar location nearby)
-                        // Note: uses m_prefabName and m_groupMax (asymmetry from vanilla)
                         if ((double)location.m_maxDistanceFromSimilar > 0.0 &&
-                            !zoneSystem.HaveLocationInRange(location.m_prefabName, location.m_groupMax, randomPointInZone, location.m_maxDistanceFromSimilar, true))
+                            !zoneSystem.HaveLocationInRange(location.m_prefab.m_assetID, location.m_groupMax, randomPointInZone, location.m_maxDistanceFromSimilar, true))
                         {
                             continue;
                         }
@@ -246,6 +245,18 @@ namespace worldGenAccelerator
                             continue;
                         }
                         if ((double)location.m_maximumVegetation < 1.0 && (double)vegMask >= (double)location.m_maximumVegetation)
+                        {
+                            continue;
+                        }
+
+                        // Preserve Valheim 1.0 alternate-biome placement restrictions.
+                        BiomeSector biomeSector = WorldGenerator.instance.GetBiomeSector(randomPointInZone);
+                        if (location.AltBiomeParent != null &&
+                            !biomeSector.AltBiomes.Any(biome => biome.m_name == location.AltBiomeParent))
+                        {
+                            continue;
+                        }
+                        if (biomeSector.AltBiomes.Any(biome => biome.m_blockLocationNames.Contains(location.m_name)))
                         {
                             continue;
                         }
