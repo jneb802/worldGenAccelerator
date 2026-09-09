@@ -6,6 +6,7 @@
     <TargetFramework>net48</TargetFramework>
     <RootNamespace>worldGenAccelerator</RootNamespace>
     <AssemblyName>worldGenAccelerator</AssemblyName>
+    <Version>1.0.1</Version>
     <LangVersion>10</LangVersion>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

@@ -1,0 +1,9 @@
+{
+  "name": "World_Gen_Accelerator",
+  "description": "Optimizes world location generation with a biome zone cache. Updated for Valheim 1.0.",
+  "version_number": "1.0.1",
+  "website_url": "https://discord.gg/3aaru2VyHJ",
+  "dependencies": [
+    "denikson-BepInExPack_Valheim-5.4.2333"
+  ]
+}
